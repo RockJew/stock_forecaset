@@ -50,7 +50,7 @@ func getCurrentValue(stockCode string) (value float64, err error) {
 	if len(data) >= 4 {
 		value, err = strconv.ParseFloat(data[3], 64)
 		if err == nil {
-			fmt.Println(value)
+			//fmt.Println(value)
 		} else {
 			fmt.Println("Error parsing float:", err)
 		}
@@ -111,7 +111,7 @@ func getHistoryValue(stockCode string, daysBefore int) (value float64, err error
 
 	if len(data) >= daysBefore {
 		value, err = strconv.ParseFloat(data[daysBefore-1].Close, 64)
-		fmt.Println(value)
+		//fmt.Println(value)
 	} else {
 		fmt.Println("Insufficient data.")
 	}
@@ -140,10 +140,59 @@ func getHistoryData(stockCode string) string {
 }
 
 // 策略算法
-func stockStrategy() {
+type stockCalculateUnit struct {
+	Code         string
+	Name         string
+	currentValue float64
+	historyValue float64
+	rateOfReturn float64
+}
 
+func stockStrategy() (err error) {
+	stockStructList := []stockCalculateUnit{
+		{Code: StockGz, Name: "国债"},
+		{Code: Stock300, Name: "沪深300"},
+		{Code: StockNSDK, Name: "美指"},
+	}
+
+	for index, _ := range stockStructList {
+		stockStructList[index].currentValue, err = getCurrentValue(stockStructList[index].Code)
+		stockStructList[index].historyValue, err = getHistoryValue(stockStructList[index].Code, StockCycle)
+		stockStructList[index].rateOfReturn = (stockStructList[index].currentValue - stockStructList[index].historyValue) / stockStructList[index].historyValue
+	}
+
+	sort.Slice(stockStructList, func(i, j int) bool {
+		return stockStructList[i].rateOfReturn-stockStructList[j].rateOfReturn > 0
+	})
+
+	//fmt.Println(stockStructList)
+	content, summary := getNoticeContent(stockStructList)
+	pushNotification(content, summary)
+	return nil
+}
+
+func getNoticeContent(stockStructList []stockCalculateUnit) (content, summary string) {
+	if stockStructList[0].rateOfReturn < 0 {
+		summary = "现金"
+	} else {
+		summary = fmt.Sprintf("调仓: %s %s", stockStructList[0].Code, stockStructList[0].Name)
+	}
+
+	contentModel := "现状\n" +
+		"%s %s %.2f%%\n" +
+		"%s %s %.2f%%\n" +
+		"%s %s %.2f%%\n" +
+		"操作\n" +
+		"%s"
+
+	content = fmt.Sprintf(contentModel, stockStructList[0].Code, stockStructList[0].Name, stockStructList[0].rateOfReturn*100,
+		stockStructList[1].Code, stockStructList[1].Name, stockStructList[1].rateOfReturn*100,
+		stockStructList[2].Code, stockStructList[2].Name, stockStructList[2].rateOfReturn*100,
+		summary)
+
+	return content, summary
 }
 
 func main() {
-	getHistoryValue(StockNSDK, StockCycle)
+	stockStrategy()
 }
