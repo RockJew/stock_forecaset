@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	StockGz   string = "sh000012"
-	Stock300  string = "sh000300"
+	StockGz   string = "sh511010"
+	Stock300  string = "sh510300"
 	StockNSDK string = "sz159632"
 
 	StockCycle int = 22
