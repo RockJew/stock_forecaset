@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	StockGz   string = "sh511010"
+	StockGold string = "sh518880"
 	Stock300  string = "sh510300"
 	StockNSDK string = "sz159632"
 
@@ -150,7 +150,7 @@ type stockCalculateUnit struct {
 
 func stockStrategy() (err error) {
 	stockStructList := []stockCalculateUnit{
-		{Code: StockGz, Name: "国债"},
+		{Code: StockGold, Name: "黄金"},
 		{Code: Stock300, Name: "沪深300"},
 		{Code: StockNSDK, Name: "美指"},
 	}
