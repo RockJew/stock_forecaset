@@ -15,6 +15,7 @@ const (
 	StockGold string = "sh518880"
 	Stock300  string = "sh510300"
 	StockNSDK string = "sz159632"
+	StockYFD  string = "sz159915"
 
 	StockCycle int = 22
 
@@ -151,7 +152,7 @@ type stockCalculateUnit struct {
 func stockStrategy() (err error) {
 	stockStructList := []stockCalculateUnit{
 		{Code: StockGold, Name: "黄金"},
-		{Code: Stock300, Name: "沪深300"},
+		{Code: StockYFD, Name: "创业板ETF"},
 		{Code: StockNSDK, Name: "美指"},
 	}
 
