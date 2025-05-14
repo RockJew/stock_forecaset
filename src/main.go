@@ -25,42 +25,30 @@ const (
 
 // 发送通知
 func pushNotification(content, summary string) {
-	target_user := "wya97@icould.com"
-	exec_shell(target_user, summary)
-	exec_shell(target_user, content)
-	// var targetUrl = "https://wxpusher.zjiecode.com/api/send/message"
-
-	// client := resty.New()
-	// body := map[string]interface{}{
-	// 	"appToken":    NoticeApptoken,
-	// 	"content":     content,
-	// 	"summary":     summary,
-	// 	"contentType": 1,
-	// 	"topicIds":    []int{25109},
-	// }
-
-	// resp, _ := client.R().
-	// 	SetHeader("Content-Type", "application/json").
-	// 	SetBody(body).
-	// 	Post(targetUrl)
-
-	// fmt.Print(resp)
+	targetUser := "wya97@icloud.com"
+	execShell(targetUser, summary)
+	execShell(targetUser, content)
 }
 
-func exec_shell(target_user string, content string) error {
+func execShell(target string, message string) {
 	// 使用 fmt.Sprintf 格式化 shell_code
-	shell_code := fmt.Sprintf(
-		`tell application "Messages"
-			set targetService to 1st service whose service type = iMessage
-			set targetBuddy to buddy "%s" of targetService
-			send "%s" to targetBuddy
-		end tell`, target_user, content)
+	// 构建 AppleScript 脚本
+	applescript := fmt.Sprintf(`
+tell application "Messages"
+    set targetService to 1st service whose service type = iMessage
+    set targetBuddy to buddy "%s" of targetService
+    send "%s" to targetBuddy
+end tell`, target, message)
 
-	// 创建 osascript 命令
-	cmd := exec.Command("osascript", "-e", shell_code)
+	// 执行 AppleScript 脚本
+	cmd := exec.Command("osascript", "-e", applescript)
 
-	// 运行命令并返回错误
-	return cmd.Run()
+	// 运行命令并获取输出和错误
+	if err := cmd.Run(); err != nil {
+		fmt.Println("Error:", err)
+	} else {
+		fmt.Println("Message sent successfully!")
+	}
 }
 
 // 获取股票当前值
