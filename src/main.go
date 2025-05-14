@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-resty/resty/v2"
+	"os/exec"
 	"regexp"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
-	"os/exec"
 )
 
 const (
@@ -25,7 +25,7 @@ const (
 
 // 发送通知
 func pushNotification(content, summary string) {
-	target_user = "wya97@icould.com"
+	target_user := "wya97@icould.com"
 	exec_shell(target_user, summary)
 	exec_shell(target_user, content)
 	// var targetUrl = "https://wxpusher.zjiecode.com/api/send/message"
